@@ -132,7 +132,18 @@ namespace GUI
             /// <returns></returns>
             GameObject VerifyClassButton = GameObject.Find("MainPanel/VerifyClassButton").gameObject;
             Button _verifyButton = VerifyClassButton.GetComponent<Button>();
-            _verifyButton.onClick.AddListener(() => VerifyClass());
+            _verifyButton.onClick.AddListener(() =>
+                {
+                    if (AppController.Instance.classVerified)
+                    {
+                        ShowAlertPanel(CourseClosedMessage);
+                    }
+                    else
+                    {
+                        VerifyClass();
+                    }
+                }
+            );
         }
 
 
