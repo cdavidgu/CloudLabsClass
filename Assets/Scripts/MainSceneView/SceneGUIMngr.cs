@@ -47,6 +47,9 @@ namespace GUI
             VerifyPanel.SetActive(false);
         }
 
+        /// <summary>
+        /// EL panel que alerta al profesor con algún mensaje. Función que llama el botón OK del panel de alertas
+        /// </summary>
         private void VerifyOKButtonCallback()
         {
             VerifyPanel.SetActive(false);
@@ -308,7 +311,10 @@ namespace GUI
                     Destroy(_tile.gameObject);
                 }
             });
-
+            /// <summary>
+            /// Cuando se cambie el valor del checkbox de aprobación se verifica si la acción se debe ejcutar 
+            /// o si se debe alertar al profesor que el curso ya fue calificado y cerrado. 
+            /// </summary>
             _tile.SetPassCheckButtonValueChanged(() =>
             {
                 if (AppController.Instance.classVerified)
@@ -352,6 +358,9 @@ namespace GUI
             EditPanelModal.Score = "";
         }
 
+        /// <summary>
+        /// Se guardans los datos de los estudiantes 
+        /// </summary>
         private void SaveDataScene()
         {
             int childCount = ScrollViewContent.transform.childCount;

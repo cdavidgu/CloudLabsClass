@@ -26,6 +26,10 @@ namespace GUI
         // Start is called before the first frame update
         void Start()
         {
+            /// <summary>
+            /// Se inicializan todos los componentes gráficos de la escena y se definen las acciones de los botones y demás
+            /// elementos con los que interactúa e usuario.  
+            /// /// </summary>
             InitSidePanel();
             VerifyPanel = GameObject.Find("VerifyMssgPanel");
             VerifyPanel.transform.Find("Modal/OKButton").GetComponent<Button>().onClick.AddListener(() => VerifyOKButtonCallback());
@@ -40,6 +44,14 @@ namespace GUI
 
         }
 
+        /// <summary>
+        /// Método que se llama cuando el botón OK del panel de alerta de verificación.
+        /// Se oculta el panel de alerta y en caso de que todos los estudiantes estén en la categoría que le corresponde 
+        /// (a través de la cariavle "classVerified") se guardan los datos de los estudiantes en el archivo JSON y se carga
+        /// de nuevo la escena principal. 
+        /// La variable AppController.Instance.classVerified es utilizada en la escena principal para validar si el profesor 
+        /// puede editar o no la información de los alumnos dependiento si el curso ya fue calificado y cerrado. 
+        /// </summary>
         private void VerifyOKButtonCallback()
         {
             VerifyPanel.SetActive(false);
@@ -51,6 +63,12 @@ namespace GUI
             }
         }
 
+
+        /// <summary>
+        /// Se inicializa el panel lateral con la imagen y nombre de los estudiantes. 
+        /// Los datos de cada estudiante se obtienen de la variable sel singleton AppController.Instance.ListStudents.students
+        /// y son guardados en un objeto de clase StudentPicMngr. 
+        /// </summary>
         private void InitSidePanel()
         {
             GameObject ScrollViewContent = GameObject.Find("MainPanel/SidePanel/ScrollView/Viewport/Content");
@@ -69,6 +87,11 @@ namespace GUI
             }
         }
 
+        /// <summary>
+        /// Método llamado cuando se selecciona un estudiante. La información del estudiante es visualizada
+        /// en el panel lateral de información
+        /// </summary>
+        /// <param name="_student"></param>
         void SetSidePanelInfo(Student _student)
         {
             StudentInfoPanel.transform.Find("Name/Background/Text").GetComponent<TMP_Text>().text = _student.name;
@@ -78,6 +101,14 @@ namespace GUI
             StudentInfoPanel.transform.Find("Score/Background/Text").GetComponent<TMP_Text>().text = _student.score;
         }
 
+
+        /// <summary>
+        /// Método que es llamado cuando el usuario ya ha arrastrado todos los elementos (estudiantes) del panel lateral 
+        /// (zona neutra) a los páneles de las categorías AProbado y Reprobado.
+        /// Las categorías son ScrollView en donde se ordenan los elementos arrastrados. Al recorrer todos los hijos de 
+        /// los scrollview se obtiene la informaciónm del puntaje de cada estudiante y se coteja con la categoría en 
+        /// la que quedó asignado, 
+        /// </summary>
         void CheckCategories()
         {
 
@@ -112,6 +143,12 @@ namespace GUI
             VerifyPanel.SetActive(true);
         }
 
+
+        /// <summary>
+        /// Método que convierte el puntaje del estudiante de texto a flotante
+        /// </summary>
+        /// <param name="student"></param>
+        /// <returns></returns>
         float GetStudentScore(Transform student)
         {
             StudentPicMngr _studentInfoMngr = student.GetComponent<StudentPicMngr>();

@@ -6,6 +6,14 @@ using Models;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
+/// <summary>
+/// Los onjetos de clase StudentPicMngr almacenan la información de cada estudiante dentro de un objketo de clase Student
+/// y además se encarga de detectar las acciones del usuario: CLick sobre Imagen de estudiante, "Drag" de una Imagen de 
+/// estudiante y finalización de "Drag" del estudiante. 
+/// La detección del clik y del drag se logra a través del sistema de eventos de unity y se implementan los métodos OnBeginDragg
+/// OnDrag, OnEndDrag y OnPointerDown de las interfaces IBeginDragHandler, IEndDragHandler, IDragHandler, IPointerDownHandler de Unity.
+/// 
+/// </summary>
 namespace GUI
 {
     public class StudentPicMngr : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragHandler, IPointerDownHandler
