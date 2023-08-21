@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using Models;
 using Controllers;
@@ -7,7 +5,7 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System;
 using TMPro;
-using System.IO;
+
 
 
 namespace GUI
@@ -24,7 +22,9 @@ namespace GUI
         GameObject VerifyPanel;
         GameObject ScrollViewContent;
         Modal EditPanelModal;
-        bool isModalToCreate = false;
+        bool isModalToCreate;
+        bool closeScene;
+        const string CourseClosedMessage = "El curso ya ha sido calificado, deseas volver a calificar?";
 
         // Start is called before the first frame update
         void Start()
@@ -34,6 +34,12 @@ namespace GUI
             EditPanel = GameObject.Find("EditPanel");
             VerifyPanel = GameObject.Find("VerifyMssgPanel");
             VerifyPanel.transform.Find("Modal/OKButton").GetComponent<Button>().onClick.AddListener(() => VerifyOKButtonCallback());
+            VerifyPanel.transform.Find("Modal/CancelButton").GetComponent<Button>().onClick.AddListener(() => { VerifyPanel.SetActive(false); });
+            if (AppController.Instance.classVerified)
+                VerifyPanel.transform.Find("Modal/CancelButton").gameObject.SetActive(true);
+            else
+                VerifyPanel.transform.Find("Modal/CancelButton").gameObject.SetActive(false);
+
             ScrollViewContent = GameObject.Find("MainPanel/ScrollView/Viewport/Content");
             InitMainPanel(AppController.Instance.ListStudents);
             InitEditPanel();
@@ -46,11 +52,21 @@ namespace GUI
             VerifyPanel.SetActive(false);
             if (AppController.Instance.classVerified)
             {
+                AppController.Instance.classVerified = false;
+                VerifyPanel.transform.Find("Modal/CancelButton").gameObject.SetActive(false);
+            }
+            if (closeScene)
+            {
                 SaveDataScene();
                 SceneManager.LoadScene("DragNDropScene");
             }
         }
 
+        void ShowAlertPanel(string mssg)
+        {
+            VerifyPanel.transform.Find("Modal/Message").GetComponent<TMP_Text>().text = mssg;
+            VerifyPanel.SetActive(true);
+        }
 
         private void InitMainPanel(ListStudents _listStudents)
         {
@@ -80,8 +96,15 @@ namespace GUI
             Button _newStudentBttn = CreateStudenButton.GetComponent<Button>();
             _newStudentBttn.onClick.AddListener(() =>
             {
-                isModalToCreate = true;
-                ShowModalToCreate();
+                if (AppController.Instance.classVerified)
+                {
+                    ShowAlertPanel(CourseClosedMessage);
+                }
+                else
+                {
+                    ShowModalToCreate();
+                    isModalToCreate = true;
+                }
             });
 
 
@@ -104,7 +127,7 @@ namespace GUI
             /// Se referencia el botón "Verificar Clase" y se asigna el método que éste llamará cuando sea pulsado
             /// </summary>
             /// <returns></returns>
-            GameObject VerifyClassButton = GameObject.Find("VerifyClassButton").gameObject;
+            GameObject VerifyClassButton = GameObject.Find("MainPanel/VerifyClassButton").gameObject;
             Button _verifyButton = VerifyClassButton.GetComponent<Button>();
             _verifyButton.onClick.AddListener(() => VerifyClass());
         }
@@ -119,8 +142,9 @@ namespace GUI
         private void VerifyClass()
         {
             float threshold;
-            AppController.Instance.classVerified = true;
-            string Mssg = "Curso Verificado Correctamente";
+            bool verified;
+            verified = true;//local
+            string Mssg;
             threshold = AppController.Instance.ThresholdScore;
             foreach (Transform child in ScrollViewContent.transform)
             {
@@ -129,15 +153,21 @@ namespace GUI
                 if ((floatScore < threshold && _tile.passCheck) || (floatScore >= threshold && !_tile.passCheck))
                 {
                     _tile.ScoreColor = Color.red;
-                    AppController.Instance.classVerified = false;
+                    verified = false;//local
                 }
                 else
                     _tile.ScoreColor = Color.black;
             }
-            if (!AppController.Instance.classVerified)
+            if (verified)
+            {
+                Mssg = "Curso Verificado Correctamente";
+                closeScene = true;
+            }
+            else
+            {
                 Mssg = "Error al verificar la clase. \nPor favor verifica las notas de los estudiantes que aparecen en rojo";
-            VerifyPanel.transform.Find("Modal/Message").GetComponent<TMP_Text>().text = Mssg;
-            VerifyPanel.SetActive(true);
+            }
+            ShowAlertPanel(Mssg);
         }
 
 
@@ -180,7 +210,7 @@ namespace GUI
         private string ConvertFormatToZeroHundred(string _score)
         {
             float floatScore = float.Parse(_score);
-            return (floatScore * 100 / 5).ToString();
+            return ((int)(floatScore * 100 / 5)).ToString();
         }
 
 
@@ -192,8 +222,6 @@ namespace GUI
         private string ConvertFormatToZeroFive(string _score)
         {
             int intScore = int.Parse(_score);
-            print("INT = " + intScore);
-            print("FLOAT Convertion = " + (float)intScore * 5 / 100);
             float _f = (float)intScore * 5 / 100;
             return _f.ToString("F2");
         }
@@ -255,15 +283,45 @@ namespace GUI
             /// </summary>
             _tile.SetEditButtonOnClickAction(() =>
             {
-                isModalToCreate = false;
-                ShowModalToEdit(_tile);
+                if (AppController.Instance.classVerified) //ok
+                {
+                    ShowAlertPanel(CourseClosedMessage);
+                }
+                else
+                {
+                    isModalToCreate = false;
+                    ShowModalToEdit(_tile);
+                }
+
             });
             /// <summary>
             /// Cuando se pulse el botón para eliminar se llama la función que destruye el objeto
             /// </summary>
-            _tile.SetDeleteButtonOnClickAction();
+            _tile.SetDeleteButtonOnClickAction(() =>
+            {
+                if (AppController.Instance.classVerified) //ok 
+                {
+                    ShowAlertPanel(CourseClosedMessage);
+                }
+                else
+                {
+                    Destroy(_tile.gameObject);
+                }
+            });
+
+            _tile.SetPassCheckButtonValueChanged(() =>
+            {
+                if (AppController.Instance.classVerified)
+                {
+                    ShowAlertPanel(CourseClosedMessage);
+                    _tile.SetPashCheckWithoutNotify(!_tile.passCheck);
+                }
+            });
+
+
             return _tile;
         }
+
 
         /// <summary>
         /// Visualización del modal con los datos del estudiante que se quiere modificar

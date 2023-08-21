@@ -8,6 +8,7 @@ namespace Models
     [System.Serializable]
     public class ListStudents
     {
+        public int scoreFormat;
         public Student[] students;
     }
     [System.Serializable]
@@ -17,6 +18,6 @@ namespace Models
         public string surname;
         public string code;
         public string email;
-        public float score;
+        public string score;
     }
 }

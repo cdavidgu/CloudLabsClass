@@ -14,10 +14,12 @@ namespace Controllers
         private static AppController _instance;
 
         // Variable que almacena los datos de los estudiantes que se leen desde el archivo JSON 
-        public ListStudents ListStudents;
+        [HideInInspector] public ListStudents ListStudents;
 
         /// variable que permite a la aplicación conocer cuál es el estudiante seleccionado por el profesor
-        public StudentTileGUI SelectedStudentTile;
+        [HideInInspector] public StudentTileGUI SelectedStudentTile;
+        public bool classVerified = false;
+        [HideInInspector] public float ThresholdScore;
         const string jsonPath = "Assets/StreamingAssets/students.json";
 
 
@@ -59,6 +61,8 @@ namespace Controllers
         {
             string jsonText = File.ReadAllText(jsonPath);
             ListStudents = JsonUtility.FromJson<ListStudents>(jsonText);
+            print(ListStudents.scoreFormat);
+            ThresholdScore = ListStudents.scoreFormat == 0 ? 3.0f : 60.0f;
         }
 
         // Start is called before the first frame update
@@ -67,5 +71,11 @@ namespace Controllers
 
         }
 
+        public void WriteDataOnJsonFile()
+        {
+            string jsonText = JsonUtility.ToJson(ListStudents, true);
+            File.WriteAllText(jsonPath, jsonText);
+            Debug.Log("Saving Student Data to JSON file.");
+        }
     }
 }

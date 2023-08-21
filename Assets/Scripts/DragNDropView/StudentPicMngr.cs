@@ -35,7 +35,7 @@ namespace GUI
         public void OnEndDrag(PointerEventData eventData)
         {
             Debug.Log("EndDrag");
-            // transform.SetParent(parentEndDrag);
+            transform.SetParent(parentEndDrag);
             transform.GetComponent<Image>().raycastTarget = true;
         }
 

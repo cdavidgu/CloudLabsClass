@@ -20,6 +20,7 @@ namespace GUI
         GameObject StudentInfoPanel;
         GameObject ApprovedScrollView;
         GameObject NoApprovedScrollView;
+        bool classVerified;
 
 
         // Start is called before the first frame update
@@ -42,11 +43,11 @@ namespace GUI
         private void VerifyOKButtonCallback()
         {
             VerifyPanel.SetActive(false);
-            if (AppController.Instance.classVerified)
+            if (classVerified)
             {
-                Debug.Log("Writing JSON...");
+                AppController.Instance.classVerified = true;
                 AppController.Instance.WriteDataOnJsonFile();
-                // SceneManager.LoadScene("DragNDropScene");
+                SceneManager.LoadScene("MainScene");
             }
         }
 
@@ -81,37 +82,40 @@ namespace GUI
         {
 
             string Mssg = "Felicitaciones.\nCurso calificado correctamente.";
-            bool showCheck = false;
-            bool showCheckApproved = false;
-            bool showCheckNoApproved = false;
-            AppController.Instance.classVerified = true;
+            bool showErrorMark = false;
+            bool errorInApprovedCategory = false;
+            bool errorInNoApprovedCategory = false;
+            classVerified = true;
 
             foreach (Transform child in ApprovedScrollView.transform.Find("Content").transform)
             {
-                StudentPicMngr _studentInfoMngr = child.GetComponent<StudentPicMngr>();
-                float floatScore = float.Parse(_studentInfoMngr.studentData.score);
-                showCheck = floatScore < AppController.Instance.ThresholdScore;
-                if (showCheck)
-                    showCheckApproved = true;
-                child.transform.Find("CheckImage").gameObject.SetActive(showCheck);
+                float floatScore = GetStudentScore(child);
+                showErrorMark = floatScore < AppController.Instance.ThresholdScore;
+                if (showErrorMark)
+                    errorInApprovedCategory = true;
+                child.transform.Find("CheckImage").gameObject.SetActive(showErrorMark);
             }
             foreach (Transform child in NoApprovedScrollView.transform.Find("Content").transform)
             {
-                StudentPicMngr _studentInfoMngr = child.GetComponent<StudentPicMngr>();
-                float floatScore = float.Parse(_studentInfoMngr.studentData.score);
-                showCheck = floatScore >= AppController.Instance.ThresholdScore;
-                if (showCheck)
-                    showCheckNoApproved = true;
-                child.transform.Find("CheckImage").gameObject.SetActive(showCheck);
+                float floatScore = GetStudentScore(child);
+                showErrorMark = floatScore >= AppController.Instance.ThresholdScore;
+                if (showErrorMark)
+                    errorInNoApprovedCategory = true;
+                child.transform.Find("CheckImage").gameObject.SetActive(showErrorMark);
             }
-            if (showCheckApproved || showCheckNoApproved)
+            if (errorInApprovedCategory || errorInNoApprovedCategory)
             {
                 Mssg = "Error. Algunos estudiantes han sido clasificados incorrectamente. Intenta de nuevo";
-                AppController.Instance.classVerified = false;
+                classVerified = false;
             }
             VerifyPanel.transform.Find("Modal/Message").GetComponent<TMP_Text>().text = Mssg;
             VerifyPanel.SetActive(true);
+        }
 
+        float GetStudentScore(Transform student)
+        {
+            StudentPicMngr _studentInfoMngr = student.GetComponent<StudentPicMngr>();
+            return float.Parse(_studentInfoMngr.studentData.score);
         }
     }
 }

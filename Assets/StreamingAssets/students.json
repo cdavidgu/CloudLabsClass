@@ -1,60 +1,61 @@
 {
+    "scoreFormat": 0,
     "students": [
         {
-            "name": "John",
+            "name": "Andres",
             "surname": "García",
             "code": "JD123",
             "email": "john@colegio.edu.co",
-            "score": 1.5
+            "score": "2.95"
         },
         {
             "name": "Juliana",
             "surname": "Martínez",
             "code": "JS456",
             "email": "juliana@colegio.edu.co",
-            "score": 4.1
+            "score": "4.10"
         },
         {
             "name": "Alex",
             "surname": "Rodríguez",
             "code": "AJ789",
             "email": "alex@colegio.edu.co",
-            "score": 2.5
+            "score": "2.50"
         },
         {
             "name": "Emilio",
             "surname": "Hernández",
             "code": "EW101",
             "email": "emilio@colegio.edu.co",
-            "score": 1.8
+            "score": "1.80"
         },
         {
             "name": "Michael",
             "surname": "López",
             "code": "MB202",
             "email": "michael@colegio.edu.co",
-            "score": 4.9
+            "score": "4.90"
         },
         {
             "name": "Sofía",
-            "surname": "Pérez",
+            "surname": "Amórtegui",
             "code": "SJ303",
             "email": "sofia@colegio.edu.co",
-            "score": 3
+            "score": "5.00"
         },
         {
             "name": "William",
             "surname": "González",
             "code": "WM404",
             "email": "william@colegio.edu.co",
-            "score": 0.5
+            "score": "5.00"
         },
         {
-            "name": "Olivia",
-            "surname": "Fernández",
-            "code": "OD505",
-            "email": "olivia@colegio.edu.co",
-            "score": 2.9
+            "name": "David",
+            "surname": "Gomez",
+            "code": "DC002",
+            "email": "david@colegio.edu.co",
+            "score": "4.80"
         }
     ]
 }

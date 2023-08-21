@@ -18,6 +18,7 @@ public class StudentTileGUI : MonoBehaviour
 {
     GameObject TextName, TextSurname, TextCode, TextEmail, TextScore, EditButton, DeleteButton, PassCheck;
 
+    /* ------------------------------- Propiedades ------------------------------ */
     public String Name
     {
         get { return TextName.GetComponent<TMP_Text>().text; }
@@ -53,7 +54,9 @@ public class StudentTileGUI : MonoBehaviour
     public bool passCheck
     {
         get { return PassCheck.GetComponent<Toggle>().isOn; }
+        set { PassCheck.GetComponent<Toggle>().isOn = value; }
     }
+
 
     /// <summary>
     /// Referencias de los objetos (hijos) del prefab.
@@ -73,10 +76,10 @@ public class StudentTileGUI : MonoBehaviour
     /// Función para Eliminar datos del estudiante. En este caso se elimina el prefab anteriormente 
     /// instanciado
     /// </summary>
-    public void SetDeleteButtonOnClickAction()
+    public void SetDeleteButtonOnClickAction(Action onclickAction)
     {
         Button deleteButton = DeleteButton.GetComponent<Button>();
-        deleteButton.onClick.AddListener(() => Destroy(gameObject));
+        deleteButton.onClick.AddListener(() => onclickAction());
     }
     /// <summary>
     /// Función para asignar la acción a ejecutar cuando se pulse el botón "Editar" del prefab
@@ -86,5 +89,14 @@ public class StudentTileGUI : MonoBehaviour
     {
         Button editButton = EditButton.GetComponent<Button>();
         editButton.onClick.AddListener(() => onclickAction());
+    }
+    public void SetPassCheckButtonValueChanged(Action onclickAction)
+    {
+        Toggle passCheck = PassCheck.GetComponent<Toggle>();
+        passCheck.onValueChanged.AddListener((value) => onclickAction());
+    }
+    public void SetPashCheckWithoutNotify(bool value)
+    {
+        PassCheck.GetComponent<Toggle>().SetIsOnWithoutNotify(value);
     }
 }
